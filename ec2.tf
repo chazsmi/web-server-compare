@@ -31,17 +31,7 @@ resource "aws_instance" "go_server" {
   instance_type = "t2.micro"
   security_groups = ["allow_all"]
   key_name = "test_s"
-/*
-  provisioner "file" {
-    source      = "goserver/server"
-    destination = "/tmp/server"
-    connection {
-        type     = "ssh"
-        user     = "ubuntu"
-        private_key  = "${file("/Users/charliesmith/Downloads/test_s.pem")}"
-   }
- }
-*/
+  
   provisioner "remote-exec" {
     inline = [
         "sudo apt-get update",
