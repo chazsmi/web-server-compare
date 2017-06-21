@@ -29,6 +29,7 @@ resource "aws_security_group" "allow_all" {
 resource "aws_instance" "go_server" {
   ami           = "ami-f1d7c395"
   instance_type = "t2.micro"
+  name = "Go Server"
   security_groups = ["allow_all"]
   key_name = "test_s"
   
@@ -52,4 +53,30 @@ resource "aws_instance" "go_server" {
   }
 }
 
+resource "aws_instance" "java_server" {
+  ami           = "ami-f1d7c395"
+  instance_type = "t2.micro"
+  name = "Java server"
+  security_groups = ["allow_all"]
+  key_name = "test_s"
+  
+  provisioner "remote-exec" {
+    inline = [
+        "sudo apt-get update",
+        "sudo apt-get -y install apt-transport-https ca-certificates curl software-properties-common",
+        "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+        "sudo apt-key fingerprint 0EBFCD88",
+        "sudo add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+        "sudo apt-get update",
+        "sudo apt-get -y install docker-ce",
+        "sudo docker pull chazsmi1/javaserver",
+        "sudo docker run -d -p 80:4567 chazsmi1/javaserver",
+    ]
+    connection {
+        type     = "ssh"
+        user     = "ubuntu"
+        private_key  = "${file("/Users/charlie.smith1/Downloads/test_s.pem")}"
+   }
+  }
+}
 
